@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .input-box {
+            padding: 15px;
+            font-size: 18px;
+            width: 350px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+        .button {
+            padding: 15px 30px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="inputText" class="input-box" placeholder="proje ismi">
+        <button class="button" onclick="openGamePanel()">New</button>
+    </div>
+
+    <script>
+        function openGamePanel() {
+            const inputText = document.getElementById('inputText').value;
+            if (inputText.trim() !== '') {
+                window.location.href = 'gamepanel.html';
+            }
+        }
+    </script>
+</body>
+</html>
+
