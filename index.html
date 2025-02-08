@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #toolbar {
+            background: #444;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+        #toolbar button {
+            margin-right: 10px;
+            padding: 10px;
+            background: #555;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #main {
+            display: flex;
+            flex: 1;
+        }
+        #left-panel, #right-panel {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #right-top {
+            height: 70%;
+            border: 1px solid white;
+        }
+        #right-bottom {
+            height: 30%;
+            border: 1px solid white;
+            margin-top: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100%;
+            background: #222;
+            color: white;
+            border: none;
+            resize: none;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <button id="asets">Assets</button>
+        <button id="clear">Clear</button>
+        <button id="download">Download</button>
+    </div>
+    <div id="main">
+        <div id="left-panel">
+            <textarea id="codeArea" placeholder="Write your code here..."></textarea>
+        </div>
+        <div id="right-panel">
+            <div id="right-top" contenteditable="true"></div>
+            <div id="right-bottom">
+                <input id="commandInput" placeholder="Enter command (e.g., openfile;https://example.com)">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('asets').addEventListener('click', function() {
+            try {
+                window.location.href = 'asets.html';
+            } catch (error) {
+                alert('Assets page not found!');
+            }
+        });
+
+        document.getElementById('clear').addEventListener('click', function() {
+            document.getElementById('codeArea').value = '';
+        });
+
+        document.getElementById('download').addEventListener('click', function() {
+            const filename = prompt('Enter filename:');
+            if (filename) {
+                const code = document.getElementById('codeArea').value;
+                const blob = new Blob([code], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+            }
+        });
+
+        document.getElementById('commandInput').addEventListener('input', function() {
+            const command = this.value;
+            const rightTop = document.getElementById('right-top');
+
+            // openlink; URL validation and iframe display
+            if (command.startsWith('openlink;')) {
+                const url = command.split(';')[1];
+                if (url && url.startsWith('http')) {
+                    rightTop.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>`;
+                    this.style.color = 'green';
+                } else {
+                    this.style.color = 'red';
+                    alert('Invalid URL!');
+                }
+            } 
+            // openfile; URL validation and iframe display
+            else if (command.startsWith('openfile;')) {
+                const url = command.split(';')[1];
+                if (url && url.startsWith('http')) {
+                    rightTop.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>`;
+                    this.style.color = 'green';
+                } else {
+                    this.style.color = 'red';
+                    alert('Invalid URL!');
+                }
+            } 
+            // downloadfile; URL validation and download file
+            else if (command.startsWith('downloadfile;')) {
+                const url = command.split(';')[1];
+                if (url && url.startsWith('http')) {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = url.split('/').pop(); // Derive file name from URL
+                    link.click();
+                    this.style.color = 'green';
+                } else {
+                    this.style.color = 'red';
+                    alert('Invalid URL for download!');
+                }
+            } 
+            // instalcode; URL validation and install code in textarea
+            else if (command.startsWith('instalcode;')) {
+                const url = command.split(';')[1];
+                if (url && url.startsWith('http')) {
+                    fetch(url)
+                        .then(response => response.text())
+                        .then(text => {
+                            document.getElementById('codeArea').value = text;
+                            this.style.color = 'green';
+                        })
+                        .catch(error => {
+                            this.style.color = 'red';
+                            alert('Failed to load file!');
+                        });
+                } else {
+                    this.style.color = 'red';
+                    alert('Invalid URL for code!');
+                }
+            } 
+            // If input is incorrect
+            else {
+                this.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
+
+
