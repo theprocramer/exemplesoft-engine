@@ -90,40 +90,53 @@
     <script>
         document.getElementById('test').addEventListener('click', function() {
             const code = document.getElementById('codeArea').value;
+
+            // HTML, CSS, JS kodunu iframe içinde çalıştırmak için blob ile yeni bir URL oluşturuyoruz.
             const webview = document.getElementById('webview');
             
-            // HTML, CSS, JS kodunu webview iframe içine ekleyelim
-            const htmlContent = `
+            // HTML içeriğini ayıklayalım
+            const htmlContent = getHTML(code);
+            const cssContent = getCSS(code);
+            const jsContent = getJS(code);
+
+            // HTML, CSS ve JS'yi içine yerleştirdiğimiz tam bir HTML sayfası oluşturuyoruz
+            const fullContent = `
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>${getCSS(code)}</style>
+                    <style>${cssContent}</style>
                 </head>
                 <body>
-                    ${getHTML(code)}
-                    <script>${getJS(code)}</script>
+                    ${htmlContent}
+                    <script>${jsContent}</script>
                 </body>
                 </html>
             `;
             
-            const blob = new Blob([htmlContent], { type: 'text/html' });
+            // Blob ile yeni bir URL oluşturuyoruz
+            const blob = new Blob([fullContent], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
+            
+            // iframe'in kaynağını oluşturduğumuz URL ile değiştiriyoruz
             webview.src = url;
         });
 
         function getHTML(code) {
-            const htmlMatch = code.match(/<html[\s\S]*?<\/html>/);
+            // HTML kodunu ayıklama
+            const htmlMatch = code.match(/<body[\s\S]*?<\/body>/);
             return htmlMatch ? htmlMatch[0] : '';
         }
 
         function getCSS(code) {
+            // CSS kodunu ayıklama
             const cssMatch = code.match(/<style[\s\S]*?<\/style>/);
             return cssMatch ? cssMatch[0].replace('<style>', '').replace('</style>', '') : '';
         }
 
         function getJS(code) {
+            // JS kodunu ayıklama
             const jsMatch = code.match(/<script[\s\S]*?<\/script>/);
             return jsMatch ? jsMatch[0].replace('<script>', '').replace('</script>', '') : '';
         }
