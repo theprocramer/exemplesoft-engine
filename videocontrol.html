@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WASD Video Controller</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: url('image.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      height: 100vh;
+    }
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .controls {
+      z-index: 10;
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+    .button {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #333, #555);
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .button:hover {
+      background: linear-gradient(135deg, #555, #777);
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+<body>
+  <video id="video" src="" type="video/mp4"></video>
+  
+  <div class="controls">
+    <button class="button" id="w">W</button>
+    <button class="button" id="a">A</button>
+    <button class="button" id="s">S</button>
+    <button class="button" id="d">D</button>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+
+    function playVideo(videoSrc, redirectUrl) {
+      video.src = videoSrc;
+      video.style.display = 'block';
+      video.play();
+      video.onended = () => {
+        window.location.href = redirectUrl;
+      };
+    }
+
+    function handleAction(key) {
+      switch (key) {
+        case 'w':
+          playVideo('video1.mp4', 'video5.html');
+          break;
+        case 'a':
+          playVideo('video4.mp4', 'video8.html');
+          break;
+        case 's':
+          playVideo('video2.mp4', 'video6.html');
+          break;
+        case 'd':
+          playVideo('video3.mp4', 'video7.html');
+          break;
+      }
+    }
+
+    // Button click events
+    document.getElementById('w').addEventListener('click', () => handleAction('w'));
+    document.getElementById('a').addEventListener('click', () => handleAction('a'));
+    document.getElementById('s').addEventListener('click', () => handleAction('s'));
+    document.getElementById('d').addEventListener('click', () => handleAction('d'));
+
+    // Keyboard events
+    window.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+      if (['w', 'a', 's', 'd'].includes(key)) {
+        handleAction(key);
+      }
+    });
+  </script>
+</body>
+</html>
