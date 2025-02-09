@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Engine</title>
+    <title>game Engine</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,17 +70,13 @@
         <button id="asets">Assets</button>
         <button id="clear">Clear</button>
         <button id="download">Download</button>
-        <button id="design2d">2D Design</button>
-        <button id="test">Test</button> <!-- Test butonu -->
     </div>
     <div id="main">
         <div id="left-panel">
-            <textarea id="codeArea" placeholder="Write your HTML, CSS, and JS code here..."></textarea>
+            <textarea id="codeArea" placeholder="Write your code here..."></textarea>
         </div>
         <div id="right-panel">
-            <div id="right-top">
-                <iframe id="webview" width="100%" height="100%" frameborder="0"></iframe> <!-- Web view (iframe) -->
-            </div>
+            <div id="right-top" contenteditable="true"></div>
             <div id="right-bottom">
                 <input id="commandInput" placeholder="Enter command (e.g., openfile;https://example.com)">
             </div>
@@ -88,58 +84,94 @@
     </div>
 
     <script>
-        document.getElementById('test').addEventListener('click', function() {
-            const code = document.getElementById('codeArea').value;
-
-            // HTML, CSS, JS kodunu iframe içinde çalıştırmak için blob ile yeni bir URL oluşturuyoruz.
-            const webview = document.getElementById('webview');
-            
-            // HTML içeriğini ayıklayalım
-            const htmlContent = getHTML(code);
-            const cssContent = getCSS(code);
-            const jsContent = getJS(code);
-
-            // HTML, CSS ve JS'yi içine yerleştirdiğimiz tam bir HTML sayfası oluşturuyoruz
-            const fullContent = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>${cssContent}</style>
-                </head>
-                <body>
-                    ${htmlContent}
-                    <script>${jsContent}</script>
-                </body>
-                </html>
-            `;
-            
-            // Blob ile yeni bir URL oluşturuyoruz
-            const blob = new Blob([fullContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            
-            // iframe'in kaynağını oluşturduğumuz URL ile değiştiriyoruz
-            webview.src = url;
+        document.getElementById('asets').addEventListener('click', function() {
+            try {
+                window.location.href = 'asets.html';
+            } catch (error) {
+                alert('Assets page not found!');
+            }
         });
 
-        function getHTML(code) {
-            // HTML kodunu ayıklama
-            const htmlMatch = code.match(/<body[\s\S]*?<\/body>/);
-            return htmlMatch ? htmlMatch[0] : '';
-        }
+        document.getElementById('clear').addEventListener('click', function() {
+            document.getElementById('codeArea').value = '';
+        });
 
-        function getCSS(code) {
-            // CSS kodunu ayıklama
-            const cssMatch = code.match(/<style[\s\S]*?<\/style>/);
-            return cssMatch ? cssMatch[0].replace('<style>', '').replace('</style>', '') : '';
-        }
+        document.getElementById('download').addEventListener('click', function() {
+            const filename = prompt('Enter filename:');
+            if (filename) {
+                const code = document.getElementById('codeArea').value;
+                const blob = new Blob([code], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+            }
+        });
 
-        function getJS(code) {
-            // JS kodunu ayıklama
-            const jsMatch = code.match(/<script[\s\S]*?<\/script>/);
-            return jsMatch ? jsMatch[0].replace('<script>', '').replace('</script>', '') : '';
-        }
+        document.getElementById('commandInput').addEventListener('input', function() {
+            const command = this.value;
+            const rightTop = document.getElementById('right-top');
+
+            // openlink; URL validation and iframe display
+            if (command.startsWith('openlink;')) {
+                const url = command.split(';')[1];
+                if (url && url.startsWith('http')) {
+                    rightTop.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>`;
+                    this.style.color = 'green';
+                } else {
+                    this.style.color = 'red';
+                    alert('Invalid URL!');
+                }
+            } 
+            // openfile; URL validation and iframe display
+            else if (command.startsWith('openfile;')) {
+                const url = command.split(';')[1];
+                if (url && url.startsWith('http')) {
+                    rightTop.innerHTML = `<iframe src="${url}" width="100%" height="100%" frameborder="0"></iframe>`;
+                    this.style.color = 'green';
+                } else {
+                    this.style.color = 'red';
+                    alert('Invalid URL!');
+                }
+            } 
+            // downloadfile; URL validation and download file
+            else if (command.startsWith('downloadfile;')) {
+                const url = command.split(';')[1];
+                if (url && url.startsWith('http')) {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = url.split('/').pop(); // Derive file name from URL
+                    link.click();
+                    this.style.color = 'green';
+                } else {
+                    this.style.color = 'red';
+                    alert('Invalid URL for download!');
+                }
+            } 
+            // instalcode; URL validation and install code in textarea
+            else if (command.startsWith('instalcode;')) {
+                const url = command.split(';')[1];
+                if (url && url.startsWith('http')) {
+                    fetch(url)
+                        .then(response => response.text())
+                        .then(text => {
+                            document.getElementById('codeArea').value = text;
+                            this.style.color = 'green';
+                        })
+                        .catch(error => {
+                            this.style.color = 'red';
+                            alert('Failed to load file!');
+                        });
+                } else {
+                    this.style.color = 'red';
+                    alert('Invalid URL for code!');
+                }
+            } 
+            // If input is incorrect
+            else {
+                this.style.color = 'red';
+            }
+        });
     </script>
 </body>
 </html>
