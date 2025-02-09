@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      background: linear-gradient(to bottom, #87CEEB, #1E1E1E);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let player = { x: canvas.width / 2, y: canvas.height - 100, size: 50, speed: 10 };
+    let obstacles = [];
+    let frame = 0;
+    let gameOver = false;
+
+    function drawPlayer() {
+      ctx.fillStyle = "red";
+      ctx.fillRect(player.x - player.size / 2, player.y - player.size / 2, player.size, player.size);
+    }
+
+    function drawObstacle(obstacle) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(obstacle.x, obstacle.y, obstacle.size, obstacle.size);
+    }
+
+    function updateObstacles() {
+      if (frame % 60 === 0) {
+        const size = 50 + Math.random() * 50;
+        obstacles.push({ x: Math.random() * canvas.width, y: -size, size: size, speed: 5 + Math.random() * 5 });
+      }
+
+      obstacles.forEach(obstacle => {
+        obstacle.y += obstacle.speed;
+        if (obstacle.y > canvas.height) {
+          obstacles.splice(obstacles.indexOf(obstacle), 1);
+        }
+
+        // Çarpışma kontrolü
+        if (
+          player.x < obstacle.x + obstacle.size &&
+          player.x + player.size > obstacle.x &&
+          player.y < obstacle.y + obstacle.size &&
+          player.y + player.size > obstacle.y
+        ) {
+          gameOver = true;
+        }
+      });
+    }
+
+    function gameLoop() {
+      if (gameOver) {
+        ctx.fillStyle = "black";
+        ctx.font = "48px sans-serif";
+        ctx.fillText("Oyun Bitti!", canvas.width / 2 - 100, canvas.height / 2);
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawPlayer();
+      updateObstacles();
+      obstacles.forEach(drawObstacle);
+
+      frame++;
+      requestAnimationFrame(gameLoop);
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft" && player.x > player.size / 2) {
+        player.x -= player.speed;
+      }
+      if (e.key === "ArrowRight" && player.x < canvas.width - player.size / 2) {
+        player.x += player.speed;
+      }
+    });
+
+    gameLoop();
+  </script>
+</body>
+</html>
