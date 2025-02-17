@@ -80,14 +80,19 @@
             padding: 5px;
             box-sizing: border-box;
         }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            box-sizing: border-box;
+        #files {
             background: #222;
-            color: white;
-            border: 1px solid #555;
+            padding: 10px;
+            border-top: 1px solid #555;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            height: 150px;
+        }
+        .file-item {
+            padding: 5px;
+            cursor: pointer;
+            border-bottom: 1px solid #555;
         }
     </style>
 </head>
@@ -99,6 +104,8 @@
         <button id="design2d">2D Design</button>
         <button id="import">Import</button>
         <button id="test">Test</button>
+        <button id="save">Save</button>
+        <button id="addFile">+</button>
     </div>
     <div id="main">
         <div id="left-panel">
@@ -106,7 +113,6 @@
         </div>
         <div id="right-panel">
             <div id="right-top">
-                <!-- Web viewer will be here -->
                 <iframe id="webViewer" style="width: 100%; height: 100%;" frameborder="0"></iframe>
             </div>
             <div id="right-bottom">
@@ -114,70 +120,65 @@
             </div>
         </div>
     </div>
-
+    <div id="files"></div>
     <input type="file" id="fileInput" style="display: none;">
-    
     <script>
-        document.getElementById('asets').addEventListener('click', function() {
-            window.location.href = 'asets.html';
-        });
-
-        document.getElementById('clear').addEventListener('click', function() {
-            document.getElementById('codeArea').value = '';
-        });
-
-        document.getElementById('download').addEventListener('click', function() {
+        document.getElementById('save').addEventListener('click', function() {
             const filename = prompt('Enter filename:');
             if (filename) {
                 const code = document.getElementById('codeArea').value;
-                const blob = new Blob([code], { type: 'text/plain' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = filename;
-                link.click();
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.textContent = filename;
+                fileItem.onclick = function() {
+                    document.getElementById('codeArea').value = code;
+                };
+                document.getElementById('files').appendChild(fileItem);
             }
         });
 
-        document.getElementById('design2d').addEventListener('click', function() {
-            window.location.href = '2ddesign.html';
+        document.getElementById('addFile').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
         });
 
-        document.getElementById('import').addEventListener('click', function() {
-            const fileInput = document.getElementById('fileInput');
-            fileInput.accept = '.txt, .html';
-            fileInput.onchange = function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.textContent = file.name;
+                    fileItem.onclick = function() {
                         document.getElementById('codeArea').value = e.target.result;
                     };
-                    reader.readAsText(file);
-                }
-            };
-            fileInput.click();
+                    document.getElementById('files').appendChild(fileItem);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        document.getElementById('download').addEventListener('click', function() {
+            const zip = new JSZip();
+            document.querySelectorAll('.file-item').forEach(file => {
+                zip.file(file.textContent, document.getElementById('codeArea').value);
+            });
+            zip.generateAsync({ type: "blob" }).then(function(content) {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = "project.zip";
+                link.click();
+            });
         });
 
         document.getElementById('test').addEventListener('click', function() {
-            const fileInput = document.getElementById('fileInput');
-            fileInput.accept = '.html';
-            fileInput.onchange = function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const fileContent = e.target.result;
-                        const iframe = document.getElementById('webViewer');
-                        const doc = iframe.contentWindow.document;
-                        doc.open();
-                        doc.write(fileContent);
-                        doc.close();
-                    };
-                    reader.readAsText(file);
-                }
-            };
-            fileInput.click();
+            const iframe = document.getElementById('webViewer');
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(document.getElementById('codeArea').value);
+            doc.close();
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 </body>
-</html>
+</
