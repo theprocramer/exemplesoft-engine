@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Oyun Açılış Ekranı</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .start-screen {
+      text-align: center;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .start-screen h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .start-screen p {
+      font-size: 20px;
+      margin-bottom: 40px;
+    }
+
+    .start-screen button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      background-color: #ffcc00;
+      color: #000;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .start-screen button:hover {
+      background-color: #ffaa00;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="start-screen">
+    <h1>text-1</h1>
+    <p>text2</p>
+    <button onclick="startGame()">play</button>
+  </div>
+
+  <script>
+    function startGame() {
+      alert("game loading");
+      // Gerçek oyuna geçiş için başka bir sayfaya yönlendirebilirsin:
+      // window.location.href = "game.html";
+    }
+  </script>
+</body>
+</html>
