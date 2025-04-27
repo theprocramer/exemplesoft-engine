@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Games Aset</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f5f5f5;
+    }
+    header {
+      background: #0f9d58;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+    .app-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
+    }
+    .image-placeholder {
+      width: 100%;
+      height: 140px;
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #777;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+    .app-info h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .app-info p {
+      color: #666;
+      font-size: 0.9rem;
+      margin: 0.5rem 0 0 0;
+    }
+    .install-button {
+      margin-top: 1rem;
+      display: inline-block;
+      background: #0f9d58;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .install-button:hover {
+      background: #0c7b43;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Games Aset
+</header>
+
+<div class="container">
+
+  <div class="app-card">
+    <div class="image-placeholder">Game 1</div>
+    <div class="app-info">
+      <h3>Game 1</h3>
+      <p>Başlık</p>
+      <a href="#" class="install-button">Play</a>
+    </div>
+  </div>
+
+  <div class="app-card">
+    <div class="image-placeholder">Game 2</div>
+    <div class="app-info">
+      <h3>Game 2</h3>
+      <p>game 3</p>
+      <a href="#" class="install-button">Play</a>
+    </div>
+  </div>
+
+  <div class="app-card">
+    <div class="image-placeholder">Game 3</div>
+    <div class="app-info">
+      <h3>Game 3</h3>
+      <p>Oyun 3</p>
+      <a href="#" class="install-button">Play</a>
+    </div>
+  </div>
+
+  <div class="app-card">
+    <div class="image-placeholder">Game 4</div>
+    <div class="app-info">
+      <h3>Game 4</h3>
+      <p>Oyun 4</p>
+      <a href="#" class="install-button">Play</a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
