@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>exemplesoft engine</title>
+  <title>Exemplesoft Engine</title>
   <style>
+    /* Genel stil */
     body {
       font-family: Arial, sans-serif;
       background-color: #333;
@@ -94,6 +95,28 @@
       cursor: pointer;
       border-bottom: 1px solid #555;
     }
+    /* Sekme barı stilleri */
+    #tabs {
+      display: flex;
+      border-bottom: 2px solid #555;
+    }
+    .tab {
+      background-color: #555;
+      padding: 10px;
+      margin-right: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .tab.active {
+      background-color: #777;
+    }
+    .tab-close {
+      margin-left: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #bbb;
+    }
   </style>
 </head>
 <body>
@@ -123,37 +146,79 @@
   </div>
 </div>
 
+<div id="tabs"></div>
 <div id="files"></div>
 <input type="file" id="fileInput" style="display: none;">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 <script>
-const files = {}; // faylları burada saxlayırıq
+// Dosyalar
+const files = {}; 
 let currentFile = '';
+const tabs = document.getElementById('tabs');
 
+// Sekme ekleme fonksiyonu
+function addTab(filename) {
+  const tab = document.createElement('div');
+  tab.className = 'tab';
+  tab.textContent = filename;
+  
+  const closeBtn = document.createElement('span');
+  closeBtn.className = 'tab-close';
+  closeBtn.textContent = '×';
+  closeBtn.onclick = function() {
+    closeTab(filename);
+  };
+  
+  tab.appendChild(closeBtn);
+  
+  tab.onclick = function() {
+    switchFile(filename);
+  };
+  
+  tabs.appendChild(tab);
+}
+
+// Sekme değiştirme fonksiyonu
+function switchFile(filename) {
+  currentFile = filename;
+  document.getElementById('codeArea').value = files[filename];
+  
+  // Sekme aktif hale getirilir
+  const allTabs = document.querySelectorAll('.tab');
+  allTabs.forEach(tab => tab.classList.remove('active'));
+  const activeTab = Array.from(allTabs).find(tab => tab.textContent.includes(filename));
+  activeTab.classList.add('active');
+}
+
+// Sekme kapama fonksiyonu
+function closeTab(filename) {
+  delete files[filename];
+  document.getElementById('files').innerHTML = '';
+  
+  for (const name in files) {
+    addTab(name);
+  }
+  
+  if (currentFile === filename) {
+    document.getElementById('codeArea').value = '';
+    currentFile = '';
+  }
+}
+
+// Dosya ekleme işlemi
 document.getElementById('save').addEventListener('click', function() {
   if (!currentFile) {
     const filename = prompt('Enter filename:');
     if (filename) {
       currentFile = filename;
       files[filename] = document.getElementById('codeArea').value;
-      addFileItem(filename);
+      addTab(filename);
     }
   } else {
     files[currentFile] = document.getElementById('codeArea').value;
   }
 });
-
-function addFileItem(filename) {
-  const fileItem = document.createElement('div');
-  fileItem.className = 'file-item';
-  fileItem.textContent = filename;
-  fileItem.onclick = function() {
-    currentFile = filename;
-    document.getElementById('codeArea').value = files[filename];
-  };
-  document.getElementById('files').appendChild(fileItem);
-}
 
 document.getElementById('addFile').addEventListener('click', function() {
   document.getElementById('fileInput').click();
@@ -165,12 +230,13 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     const reader = new FileReader();
     reader.onload = function(e) {
       files[file.name] = e.target.result;
-      addFileItem(file.name);
+      addTab(file.name);
     };
     reader.readAsText(file);
   }
 });
 
+// Dosya indirme işlemi
 document.getElementById('download').addEventListener('click', function() {
   const zip = new JSZip();
   for (const filename in files) {
@@ -184,6 +250,7 @@ document.getElementById('download').addEventListener('click', function() {
   });
 });
 
+// Test butonu
 document.getElementById('test').addEventListener('click', function() {
   if (currentFile && files[currentFile]) {
     const iframe = document.getElementById('webViewer');
@@ -196,15 +263,17 @@ document.getElementById('test').addEventListener('click', function() {
   }
 });
 
+// Clear butonu
 document.getElementById('clear').addEventListener('click', function() {
   document.getElementById('codeArea').value = '';
 });
 
+// 2D tasarım butonu
 document.getElementById('design2d').addEventListener('click', function() {
   window.open('2d_design.html', '_blank');
 });
 
-// Komanda sistemi
+// Komut sistemi
 document.getElementById('commandInput').addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     const command = this.value.trim();
@@ -222,7 +291,7 @@ document.getElementById('commandInput').addEventListener('keypress', function(e)
         delete files[filename];
         document.getElementById('files').innerHTML = '';
         for (const name in files) {
-          addFileItem(name);
+          addTab(name);
         }
         if (currentFile === filename) {
           document.getElementById('codeArea').value = '';
