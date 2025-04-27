@@ -1,184 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Engine</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #333;
-            color: white;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        #toolbar {
-            background: #444;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #555;
-        }
-        #toolbar button {
-            margin-right: 10px;
-            padding: 10px;
-            background: #555;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #main {
-            display: flex;
-            flex: 1;
-        }
-        #left-panel {
-            flex: 1;
-            padding: 10px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        }
-        #left-panel textarea {
-            width: 100%;
-            height: 100%;
-            background: #222;
-            color: white;
-            border: none;
-            resize: none;
-            padding: 10px;
-            box-sizing: border-box;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-        }
-        #right-panel {
-            flex: 1;
-            padding: 10px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        }
-        #right-top {
-            flex: 1;
-            border: 1px solid white;
-            padding: 10px;
-            background-color: #222;
-            color: white;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #right-bottom {
-            height: 50px;
-            border: 1px solid white;
-            margin-top: 10px;
-            padding: 5px;
-            box-sizing: border-box;
-        }
-        #files {
-            background: #222;
-            padding: 10px;
-            border-top: 1px solid #555;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            height: 150px;
-        }
-        .file-item {
-            padding: 5px;
-            cursor: pointer;
-            border-bottom: 1px solid #555;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Engine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #333;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    #toolbar {
+      background: #444;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #555;
+    }
+    #toolbar button {
+      margin-right: 10px;
+      padding: 10px;
+      background: #555;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #main {
+      display: flex;
+      flex: 1;
+    }
+    #left-panel {
+      flex: 1;
+      padding: 10px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    #left-panel textarea {
+      width: 100%;
+      height: 100%;
+      background: #222;
+      color: white;
+      border: none;
+      resize: none;
+      padding: 10px;
+      box-sizing: border-box;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    #right-panel {
+      flex: 1;
+      padding: 10px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    #right-top {
+      flex: 1;
+      border: 1px solid white;
+      padding: 10px;
+      background-color: #222;
+      color: white;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #right-bottom {
+      height: 50px;
+      border: 1px solid white;
+      margin-top: 10px;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+    #files {
+      background: #222;
+      padding: 10px;
+      border-top: 1px solid #555;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 150px;
+    }
+    .file-item {
+      padding: 5px;
+      cursor: pointer;
+      border-bottom: 1px solid #555;
+    }
+  </style>
 </head>
 <body>
-    <div id="toolbar">
-        <button onclick="window.location.href='asets.html'">asets</button>
-        <button id="clear">Clear</button>
-        <button id="download">Download</button>
-        <button id="design2d">2D Design</button>
-        <button id="import">Import</button>
-        <button id="test">Test</button>
-        <button id="save">Save</button>
-        <button id="addFile">+</button>
+
+<div id="toolbar">
+  <button onclick="window.location.href='assets.html'">Assets</button>
+  <button id="clear">Clear</button>
+  <button id="download">Download</button>
+  <button id="design2d">2D Design</button>
+  <button id="import">Import</button>
+  <button id="test">Test</button>
+  <button id="save">Save</button>
+  <button id="addFile">+</button>
+</div>
+
+<div id="main">
+  <div id="left-panel">
+    <textarea id="codeArea" placeholder="Write your code here..."></textarea>
+  </div>
+  <div id="right-panel">
+    <div id="right-top">
+      <iframe id="webViewer" style="width: 100%; height: 100%;" frameborder="0"></iframe>
     </div>
-    <div id="main">
-        <div id="left-panel">
-            <textarea id="codeArea" placeholder="Write your code here..."></textarea>
-        </div>
-        <div id="right-panel">
-            <div id="right-top">
-                <iframe id="webViewer" style="width: 100%; height: 100%;" frameborder="0"></iframe>
-            </div>
-            <div id="right-bottom">
-                <input id="commandInput" placeholder="Enter command (e.g., openfile;)">
-            </div>
-        </div>
+    <div id="right-bottom">
+      <input id="commandInput" placeholder="Enter command (e.g., openfile:filename;)">
     </div>
-    <div id="files"></div>
-    <input type="file" id="fileInput" style="display: none;">
-    <script>
-        document.getElementById('save').addEventListener('click', function() {
-            const filename = prompt('Enter filename:');
-            if (filename) {
-                const code = document.getElementById('codeArea').value;
-                const fileItem = document.createElement('div');
-                fileItem.className = 'file-item';
-                fileItem.textContent = filename;
-                fileItem.onclick = function() {
-                    document.getElementById('codeArea').value = code;
-                };
-                document.getElementById('files').appendChild(fileItem);
-            }
-        });
+  </div>
+</div>
 
-        document.getElementById('addFile').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
-        });
+<div id="files"></div>
+<input type="file" id="fileInput" style="display: none;">
 
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.textContent = file.name;
-                    fileItem.onclick = function() {
-                        document.getElementById('codeArea').value = e.target.result;
-                    };
-                    document.getElementById('files').appendChild(fileItem);
-                };
-                reader.readAsText(file);
-            }
-        });
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<script>
+const files = {}; // faylları burada saxlayırıq
+let currentFile = '';
 
-        document.getElementById('download').addEventListener('click', function() {
-            const zip = new JSZip();
-            document.querySelectorAll('.file-item').forEach(file => {
-                zip.file(file.textContent, document.getElementById('codeArea').value);
-            });
-            zip.generateAsync({ type: "blob" }).then(function(content) {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(content);
-                link.download = "project.zip";
-                link.click();
-            });
-        });
+document.getElementById('save').addEventListener('click', function() {
+  if (!currentFile) {
+    const filename = prompt('Enter filename:');
+    if (filename) {
+      currentFile = filename;
+      files[filename] = document.getElementById('codeArea').value;
+      addFileItem(filename);
+    }
+  } else {
+    files[currentFile] = document.getElementById('codeArea').value;
+  }
+});
 
-        document.getElementById('test').addEventListener('click', function() {
-            const iframe = document.getElementById('webViewer');
-            const doc = iframe.contentWindow.document;
-            doc.open();
-            doc.write(document.getElementById('codeArea').value);
-            doc.close();
-        });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+function addFileItem(filename) {
+  const fileItem = document.createElement('div');
+  fileItem.className = 'file-item';
+  fileItem.textContent = filename;
+  fileItem.onclick = function() {
+    currentFile = filename;
+    document.getElementById('codeArea').value = files[filename];
+  };
+  document.getElementById('files').appendChild(fileItem);
+}
+
+document.getElementById('addFile').addEventListener('click', function() {
+  document.getElementById('fileInput').click();
+});
+
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      files[file.name] = e.target.result;
+      addFileItem(file.name);
+    };
+    reader.readAsText(file);
+  }
+});
+
+document.getElementById('download').addEventListener('click', function() {
+  const zip = new JSZip();
+  for (const filename in files) {
+    zip.file(filename, files[filename]);
+  }
+  zip.generateAsync({ type: "blob" }).then(function(content) {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(content);
+    link.download = "project.zip";
+    link.click();
+  });
+});
+
+document.getElementById('test').addEventListener('click', function() {
+  if (currentFile && files[currentFile]) {
+    const iframe = document.getElementById('webViewer');
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(files[currentFile]);
+    doc.close();
+  } else {
+    alert('No file loaded.');
+  }
+});
+
+document.getElementById('clear').addEventListener('click', function() {
+  document.getElementById('codeArea').value = '';
+});
+
+document.getElementById('design2d').addEventListener('click', function() {
+  window.open('2d_design.html', '_blank');
+});
+
+// Komanda sistemi
+document.getElementById('commandInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    const command = this.value.trim();
+    if (command.startsWith('openfile:')) {
+      const filename = command.substring(9, command.length - 1);
+      if (files[filename]) {
+        currentFile = filename;
+        document.getElementById('codeArea').value = files[filename];
+      } else {
+        alert('File not found.');
+      }
+    } else if (command.startsWith('deletefile:')) {
+      const filename = command.substring(11, command.length - 1);
+      if (files[filename]) {
+        delete files[filename];
+        document.getElementById('files').innerHTML = '';
+        for (const name in files) {
+          addFileItem(name);
+        }
+        if (currentFile === filename) {
+          document.getElementById('codeArea').value = '';
+          currentFile = '';
+        }
+      } else {
+        alert('File not found.');
+      }
+    } else {
+      alert('Unknown command.');
+    }
+    this.value = '';
+  }
+});
+</script>
+
 </body>
 </html>
