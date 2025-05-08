@@ -153,90 +153,90 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 <script>
   const files = {};
-    let currentFile = null;
+  let currentFile = null;
 
-    function updateTabs() {
-      const tabsDiv = document.getElementById('tabs');
-      tabsDiv.innerHTML = '';
-      for (const file in files) {
-        const tab = document.createElement('div');
-        tab.className = 'tab';
-        tab.textContent = file;
-        tab.onclick = () => switchFile(file);
+  function updateTabs() {
+    const tabsDiv = document.getElementById('tabs');
+    tabsDiv.innerHTML = '';
+    for (const file in files) {
+      const tab = document.createElement('div');
+      tab.className = 'tab';
+      tab.textContent = file;
+      tab.onclick = () => switchFile(file);
 
-        const closeBtn = document.createElement('span');
-        closeBtn.textContent = 'x';
-        closeBtn.className = 'close-btn';
-        closeBtn.onclick = (e) => {
-          e.stopPropagation();
-          closeTab(file);
-        };
+      const closeBtn = document.createElement('span');
+      closeBtn.textContent = 'x';
+      closeBtn.className = 'tab-close';
+      closeBtn.onclick = (e) => {
+        e.stopPropagation();
+        closeTab(file);
+      };
 
-        tab.appendChild(closeBtn);
-        tabsDiv.appendChild(tab);
-      }
+      tab.appendChild(closeBtn);
+      tabsDiv.appendChild(tab);
     }
+  }
 
-    function switchFile(filename) {
-      currentFile = filename;
-      document.getElementById('codeArea').value = files[filename];
-      updateTabs();
-      localStorage.setItem('exemplesoft_current', currentFile);
-    }
+  function switchFile(filename) {
+    currentFile = filename;
+    document.getElementById('codeArea').value = files[filename];
+    updateTabs();
+    localStorage.setItem('exemplesoft_current', currentFile);
+  }
 
-    function closeTab(filename) {
-      delete files[filename];
-      if (currentFile === filename) {
-        const remainingFiles = Object.keys(files);
-        if (remainingFiles.length > 0) {
-          switchFile(remainingFiles[0]);
-        } else {
-          currentFile = null;
-          document.getElementById('codeArea').value = '';
-        }
-      }
-      updateTabs();
-      localStorage.setItem('exemplesoft_files', JSON.stringify(files));
-      localStorage.setItem('exemplesoft_current', currentFile);
-    }
-
-    document.getElementById('save').addEventListener('click', function() {
-      if (!currentFile) {
-        const filename = prompt('Dosya adı girin:');
-        if (filename) {
-          currentFile = filename;
-          files[filename] = document.getElementById('codeArea').value;
-          updateTabs();
-        }
+  function closeTab(filename) {
+    delete files[filename];
+    if (currentFile === filename) {
+      const remainingFiles = Object.keys(files);
+      if (remainingFiles.length > 0) {
+        switchFile(remainingFiles[0]);
       } else {
-        files[currentFile] = document.getElementById('codeArea').value;
+        currentFile = null;
+        document.getElementById('codeArea').value = '';
       }
+    }
+    updateTabs();
+    localStorage.setItem('exemplesoft_files', JSON.stringify(files));
+    localStorage.setItem('exemplesoft_current', currentFile);
+  }
 
-      localStorage.setItem('exemplesoft_files', JSON.stringify(files));
-      localStorage.setItem('exemplesoft_current', currentFile);
-
-      // Kodu iframe'de çalıştır
-      const code = document.getElementById('codeArea').value;
-      const blob = new Blob([code], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      document.getElementById('result').src = url;
-    });
-
-    window.addEventListener('load', () => {
-      const savedFiles = localStorage.getItem('exemplesoft_files');
-      const savedCurrent = localStorage.getItem('exemplesoft_current');
-      if (savedFiles) {
-        const parsed = JSON.parse(savedFiles);
-        for (const name in parsed) {
-          files[name] = parsed[name];
-        }
+  document.getElementById('save').addEventListener('click', function() {
+    if (!currentFile) {
+      const filename = prompt('Dosya adı girin:');
+      if (filename) {
+        currentFile = filename;
+        files[filename] = document.getElementById('codeArea').value;
         updateTabs();
       }
-      if (savedCurrent && files[savedCurrent]) {
-        switchFile(savedCurrent);
-        document.getElementById('codeArea').value = files[savedCurrent];
+    } else {
+      files[currentFile] = document.getElementById('codeArea').value;
+    }
+
+    localStorage.setItem('exemplesoft_files', JSON.stringify(files));
+    localStorage.setItem('exemplesoft_current', currentFile);
+
+    // Kodu iframe'de çalıştır
+    const code = document.getElementById('codeArea').value;
+    const blob = new Blob([code], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    document.getElementById('webViewer').src = url; // Burada doğru iframe id'si kullanılıyor.
+  });
+
+  window.addEventListener('load', () => {
+    const savedFiles = localStorage.getItem('exemplesoft_files');
+    const savedCurrent = localStorage.getItem('exemplesoft_current');
+    if (savedFiles) {
+      const parsed = JSON.parse(savedFiles);
+      for (const name in parsed) {
+        files[name] = parsed[name];
       }
-    });
+      updateTabs();
+    }
+    if (savedCurrent && files[savedCurrent]) {
+      switchFile(savedCurrent);
+      document.getElementById('codeArea').value = files[savedCurrent];
+    }
+  });
 </script>
 
 </body>
