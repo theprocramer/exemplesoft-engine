@@ -152,160 +152,91 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 <script>
-// Dosyalar
-const files = {}; 
-let currentFile = '';
-const tabs = document.getElementById('tabs');
+  const files = {};
+    let currentFile = null;
 
-// Sekme ekleme fonksiyonu
-function addTab(filename) {
-  const tab = document.createElement('div');
-  tab.className = 'tab';
-  tab.textContent = filename;
-  
-  const closeBtn = document.createElement('span');
-  closeBtn.className = 'tab-close';
-  closeBtn.textContent = '×';
-  closeBtn.onclick = function() {
-    closeTab(filename);
-  };
-  
-  tab.appendChild(closeBtn);
-  
-  tab.onclick = function() {
-    switchFile(filename);
-  };
-  
-  tabs.appendChild(tab);
-}
+    function updateTabs() {
+      const tabsDiv = document.getElementById('tabs');
+      tabsDiv.innerHTML = '';
+      for (const file in files) {
+        const tab = document.createElement('div');
+        tab.className = 'tab';
+        tab.textContent = file;
+        tab.onclick = () => switchFile(file);
 
-// Sekme değiştirme fonksiyonu
-function switchFile(filename) {
-  currentFile = filename;
-  document.getElementById('codeArea').value = files[filename];
-  
-  // Sekme aktif hale getirilir
-  const allTabs = document.querySelectorAll('.tab');
-  allTabs.forEach(tab => tab.classList.remove('active'));
-  const activeTab = Array.from(allTabs).find(tab => tab.textContent.includes(filename));
-  activeTab.classList.add('active');
-}
+        const closeBtn = document.createElement('span');
+        closeBtn.textContent = 'x';
+        closeBtn.className = 'close-btn';
+        closeBtn.onclick = (e) => {
+          e.stopPropagation();
+          closeTab(file);
+        };
 
-// Sekme kapama fonksiyonu
-function closeTab(filename) {
-  delete files[filename];
-  document.getElementById('files').innerHTML = '';
-  
-  for (const name in files) {
-    addTab(name);
-  }
-  
-  if (currentFile === filename) {
-    document.getElementById('codeArea').value = '';
-    currentFile = '';
-  }
-}
+        tab.appendChild(closeBtn);
+        tabsDiv.appendChild(tab);
+      }
+    }
 
-// Dosya ekleme işlemi
-document.getElementById('save').addEventListener('click', function() {
-  if (!currentFile) {
-    const filename = prompt('Enter filename:');
-    if (filename) {
+    function switchFile(filename) {
       currentFile = filename;
-      files[filename] = document.getElementById('codeArea').value;
-      addTab(filename);
+      document.getElementById('codeArea').value = files[filename];
+      updateTabs();
+      localStorage.setItem('exemplesoft_current', currentFile);
     }
-  } else {
-    files[currentFile] = document.getElementById('codeArea').value;
-  }
-});
 
-document.getElementById('addFile').addEventListener('click', function() {
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', function(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      files[file.name] = e.target.result;
-      addTab(file.name);
-    };
-    reader.readAsText(file);
-  }
-});
-
-// Dosya indirme işlemi
-document.getElementById('download').addEventListener('click', function() {
-  const zip = new JSZip();
-  for (const filename in files) {
-    zip.file(filename, files[filename]);
-  }
-  zip.generateAsync({ type: "blob" }).then(function(content) {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = "project.zip";
-    link.click();
-  });
-});
-
-// Test butonu
-document.getElementById('test').addEventListener('click', function() {
-  if (currentFile && files[currentFile]) {
-    const iframe = document.getElementById('webViewer');
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(files[currentFile]);
-    doc.close();
-  } else {
-    alert('No file loaded.');
-  }
-});
-
-// Clear butonu
-document.getElementById('clear').addEventListener('click', function() {
-  document.getElementById('codeArea').value = '';
-});
-
-// 2D tasarım butonu
-document.getElementById('design2d').addEventListener('click', function() {
-  window.open('2d_design.html', '_blank');
-});
-
-// Komut sistemi
-document.getElementById('commandInput').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    const command = this.value.trim();
-    if (command.startsWith('openfile:')) {
-      const filename = command.substring(9, command.length - 1);
-      if (files[filename]) {
-        currentFile = filename;
-        document.getElementById('codeArea').value = files[filename];
-      } else {
-        alert('File not found.');
-      }
-    } else if (command.startsWith('deletefile:')) {
-      const filename = command.substring(11, command.length - 1);
-      if (files[filename]) {
-        delete files[filename];
-        document.getElementById('files').innerHTML = '';
-        for (const name in files) {
-          addTab(name);
-        }
-        if (currentFile === filename) {
+    function closeTab(filename) {
+      delete files[filename];
+      if (currentFile === filename) {
+        const remainingFiles = Object.keys(files);
+        if (remainingFiles.length > 0) {
+          switchFile(remainingFiles[0]);
+        } else {
+          currentFile = null;
           document.getElementById('codeArea').value = '';
-          currentFile = '';
+        }
+      }
+      updateTabs();
+      localStorage.setItem('exemplesoft_files', JSON.stringify(files));
+      localStorage.setItem('exemplesoft_current', currentFile);
+    }
+
+    document.getElementById('save').addEventListener('click', function() {
+      if (!currentFile) {
+        const filename = prompt('Dosya adı girin:');
+        if (filename) {
+          currentFile = filename;
+          files[filename] = document.getElementById('codeArea').value;
+          updateTabs();
         }
       } else {
-        alert('File not found.');
+        files[currentFile] = document.getElementById('codeArea').value;
       }
-    } else {
-      alert('Unknown command.');
-    }
-    this.value = '';
-  }
-});
+
+      localStorage.setItem('exemplesoft_files', JSON.stringify(files));
+      localStorage.setItem('exemplesoft_current', currentFile);
+
+      // Kodu iframe'de çalıştır
+      const code = document.getElementById('codeArea').value;
+      const blob = new Blob([code], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      document.getElementById('result').src = url;
+    });
+
+    window.addEventListener('load', () => {
+      const savedFiles = localStorage.getItem('exemplesoft_files');
+      const savedCurrent = localStorage.getItem('exemplesoft_current');
+      if (savedFiles) {
+        const parsed = JSON.parse(savedFiles);
+        for (const name in parsed) {
+          files[name] = parsed[name];
+        }
+        updateTabs();
+      }
+      if (savedCurrent && files[savedCurrent]) {
+        switchFile(savedCurrent);
+        document.getElementById('codeArea').value = files[savedCurrent];
+      }
+    });
 </script>
 
 </body>
